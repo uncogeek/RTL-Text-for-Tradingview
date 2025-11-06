@@ -46,6 +46,7 @@
 ### اسکرین شات ها
 
 **نمونه ضخامت‌های مختلف فونت وزیرمتن:**
+
 ![Vazirmatn Font Screenshot](https://raw.githubusercontent.com/uncogeek/RTL-Text-for-Tradingview/main/screenshots/Screenshot-font-Vazirmatn.png)
 
 **صفحه popup افزونه**
