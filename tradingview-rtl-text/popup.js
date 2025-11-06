@@ -16,6 +16,28 @@ let settings = {
   savedText: ''
 };
 
+// ============================================
+// EMOJI AND UNICODE COLLECTIONS
+// You can add more emojis or characters here
+// ============================================
+
+// Emoji collection - Add or remove emojis as needed
+const EMOJIS = [
+  '0️⃣', '1️⃣', '2️⃣', '3️⃣', '4️⃣', '5️⃣', '6️⃣', '7️⃣', '8️⃣', '9️⃣', '🔟',
+  '☑️', '✔️', '🔔', '👈', '👉', '👆', '👇', '☝️', '⛔️', '✅', '❌',
+  '🟢', '🔴', '⚪️', '⚫️', '🟤', '🔳', '🔲', '▪️', '▫️', '🟠', '🧲',
+  '⚖️', '⏰', '📌', '📍', '❗️', '❕', '❓', '❔', '‼️', '⁉️', '⚠️',
+  '➡️', '⬅️', '⬆️', '⬇️', '↕️', '↔️'
+];
+
+// Unicode collection - Add or remove Unicode characters as needed
+const UNICODE_CHARS = [
+  '↑', '→', '←', '↓', '↔', '↕', '↖', '↗', '↘', '↙',
+  '↩', '↪', '↱', '↳'
+];
+
+// Variable to store cursor position
+let cursorPosition = 0;
 // Load settings
 function loadSettings() {
   const saved = localStorage.getItem('rtl_text_settings');
@@ -445,6 +467,110 @@ document.addEventListener('keydown', (e) => {
     document.getElementById('insertBtn').click();
   } else if (e.key === 'Escape') {
     document.getElementById('previewModal').classList.remove('active');
+    document.getElementById('emojiPicker').classList.remove('active');
+    document.getElementById('unicodePicker').classList.remove('active');
+  }
+});
+
+// ============================================
+// EMOJI AND UNICODE PICKER FUNCTIONS
+// ============================================
+
+// Track cursor position in textarea
+const textarea = document.getElementById('textInput');
+textarea.addEventListener('click', () => {
+  cursorPosition = textarea.selectionStart;
+});
+
+textarea.addEventListener('keyup', () => {
+  cursorPosition = textarea.selectionStart;
+});
+
+// Function to insert character at cursor position
+function insertAtCursor(char) {
+  const text = textarea.value;
+  const before = text.substring(0, cursorPosition);
+  const after = text.substring(cursorPosition);
+  
+  textarea.value = before + char + after;
+  cursorPosition = cursorPosition + char.length;
+  
+  // Set cursor position after insertion
+  textarea.selectionStart = cursorPosition;
+  textarea.selectionEnd = cursorPosition;
+  textarea.focus();
+  
+  // Save the updated text
+  settings.savedText = textarea.value;
+  saveSettings();
+}
+
+// Initialize emoji picker
+function initEmojiPicker() {
+  const emojiGrid = document.getElementById('emojiGrid');
+  emojiGrid.innerHTML = '';
+  
+  EMOJIS.forEach(emoji => {
+    const item = document.createElement('div');
+    item.className = 'picker-item';
+    item.textContent = emoji;
+    item.addEventListener('click', () => {
+      insertAtCursor(emoji);
+      document.getElementById('emojiPicker').classList.remove('active');
+      showToast('Emoji inserted!', 'success');
+    });
+    emojiGrid.appendChild(item);
+  });
+}
+
+// Initialize unicode picker
+function initUnicodePicker() {
+  const unicodeGrid = document.getElementById('unicodeGrid');
+  unicodeGrid.innerHTML = '';
+  
+  UNICODE_CHARS.forEach(char => {
+    const item = document.createElement('div');
+    item.className = 'picker-item';
+    item.textContent = char;
+    item.addEventListener('click', () => {
+      insertAtCursor(char);
+      document.getElementById('unicodePicker').classList.remove('active');
+      showToast('Character inserted!', 'success');
+    });
+    unicodeGrid.appendChild(item);
+  });
+}
+
+// Emoji button
+document.getElementById('emojiBtn').addEventListener('click', () => {
+  document.getElementById('emojiPicker').classList.add('active');
+});
+
+// Unicode button
+document.getElementById('unicodeBtn').addEventListener('click', () => {
+  document.getElementById('unicodePicker').classList.add('active');
+});
+
+// Close emoji picker
+document.getElementById('closeEmojiPicker').addEventListener('click', () => {
+  document.getElementById('emojiPicker').classList.remove('active');
+});
+
+// Close unicode picker
+document.getElementById('closeUnicodePicker').addEventListener('click', () => {
+  document.getElementById('unicodePicker').classList.remove('active');
+});
+
+// Close pickers when clicking outside
+document.getElementById('emojiPicker').addEventListener('click', (e) => {
+  if (e.target.id === 'emojiPicker') {
+    document.getElementById('emojiPicker').classList.remove('active');
+  }
+});
+
+document.getElementById('unicodePicker').addEventListener('click', (e) => {
+  if (e.target.id === 'unicodePicker') {
+    document.getElementById('unicodePicker').classList.remove('active');
   }
 });
 
@@ -481,3 +607,5 @@ document.getElementById('insertBtn').addEventListener('click', async () => {
 
 // Initialize
 loadSettings();
+initEmojiPicker();
+initUnicodePicker();
