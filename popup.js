@@ -14,9 +14,9 @@ let settings = {
   wrapText: false,
   maxWidth: 800,
   rtlMode: true,
-  savedText: ''
+  savedText: '',
+  autoPaste: false
 };
-
 // Track cursor position and selection
 let cursorPosition = 0;
 let savedSelection = null;
@@ -106,6 +106,7 @@ function applySettingsToUI() {
   document.getElementById('maxWidth').value = settings.maxWidth;
   document.getElementById('maxWidthValue').textContent = settings.maxWidth + 'px';
   document.getElementById('rtlMode').checked = settings.rtlMode;
+  document.getElementById('autoPaste').checked = settings.autoPaste;
   
   // Restore saved text with colors
   const editor = document.getElementById('textInput');
@@ -798,6 +799,11 @@ document.getElementById('rtlMode').addEventListener('change', (e) => {
   updateTextareaStyle();
 });
 
+document.getElementById('autoPaste').addEventListener('change', (e) => {
+  settings.autoPaste = e.target.checked;
+  saveSettings();
+});
+
 document.getElementById('maxWidth').addEventListener('input', (e) => {
   settings.maxWidth = parseInt(e.target.value);
   document.getElementById('maxWidthValue').textContent = settings.maxWidth + 'px';
@@ -903,20 +909,41 @@ document.getElementById('insertBtn').addEventListener('click', async () => {
   try {
     canvas.toBlob(async (blob) => {
       try {
+        // Copy to clipboard
         await navigator.clipboard.write([
           new ClipboardItem({ 'image/png': blob })
         ]);
-        showToast('✓ Image copied! Paste in TradingView', 'success');
+        
+        console.log('✅ Image copied to clipboard');
+        showToast('Image copied! Switching to page...', 'success');
+        
+        // Wait a moment for clipboard
+        await new Promise(resolve => setTimeout(resolve, 150));
+        
+		// Send message to background script with autoPaste setting
+			chrome.runtime.sendMessage({ 
+			  action: 'triggerPaste',
+			  autoPaste: settings.autoPaste 
+			}, (response) => {
+			  console.log('📡 Response from background:', response);
+          
+          // Close popup after showing notification on page
+          setTimeout(() => {
+            window.close();
+          }, 800);
+        });
+        
       } catch (err) {
-        console.error('Clipboard error:', err);
+        console.error('❌ Clipboard error:', err);
         showToast('Error: ' + err.message, 'error');
       }
     }, 'image/png');
   } catch (err) {
-    console.error('Error:', err);
+    console.error('❌ Error:', err);
     showToast('Error: ' + err.message, 'error');
   }
 });
+
 
 document.addEventListener('keydown', (e) => {
   if (e.ctrlKey && e.key === 'Enter') {
