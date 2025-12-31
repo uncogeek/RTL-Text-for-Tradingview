@@ -5,7 +5,7 @@ const SHOW_NOTIFICATION = false;    // Set to true to show "Image Ready" notific
 // ============================================
 
 // Listen for messages from background script
-chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
+browser.runtime.onMessage.addListener((request, sender, sendResponse) => {
   if (request.action === 'paste') {
     console.log('🎨 Paste action received in content script');
     
@@ -163,7 +163,7 @@ function focusDrawingArea() {
 }
 
 function attemptPaste() {
-  console.log('🔄 Attempting paste on:', document.activeElement.tagName, document.activeElement.className);
+  console.log('📋 Attempting paste on:', document.activeElement.tagName, document.activeElement.className);
   
   const activeElement = document.activeElement;
   
@@ -243,7 +243,7 @@ function attemptPaste() {
               activeElement.dispatchEvent(pasteEvent);
               document.dispatchEvent(pasteEvent);
               
-              console.log('📎 Paste event with clipboard data dispatched');
+              console.log('🔎 Paste event with clipboard data dispatched');
             });
           }
         });
@@ -341,4 +341,4 @@ if (!document.getElementById('rtl-paste-styles')) {
   document.head.appendChild(style);
 }
 
-console.log('✅ RTL Text to Image - Content script loaded [V3]');
+console.log('✅ RTL Text to Image - Content script loaded [V3 - Firefox]');
