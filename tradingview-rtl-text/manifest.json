@@ -1,7 +1,7 @@
 {
   "manifest_version": 3,
   "name": "RTL Text to Image",
-  "version": "1.4",
+  "version": "1.6",
   "description": "Convert RTL Persian text to image for TradingView",
   "action": {
     "default_popup": "popup.html",
@@ -12,7 +12,22 @@
     }
   },
   "permissions": [
-    "clipboardWrite"
+    "clipboardWrite",
+    "activeTab"
+  ],
+  "background": {
+    "service_worker": "background.js"
+  },
+  "content_scripts": [
+    {
+      "matches": ["<all_urls>"],
+      "js": ["content.js"],
+      "run_at": "document_end",
+      "all_frames": true
+    }
+  ],
+  "host_permissions": [
+    "<all_urls>"
   ],
   "icons": {
     "16": "icon16.png",

@@ -2,7 +2,7 @@
 <html>
 <head>
   <meta charset="UTF-8">
-  <style>
+<style>
     @font-face {
       font-family: 'Vazirmatn';
       src: url('Vazirmatn.ttf') format('truetype');
@@ -12,7 +12,7 @@
     
     body {
       width: 750px;
-      height: 500px;
+      height: 550px;
       padding: 0;
       margin: 0;
       font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Arial, sans-serif;
@@ -218,6 +218,18 @@
       min-height: 100%;
     }
     
+    [contenteditable] {
+      -webkit-user-select: text;
+      user-select: text;
+    }
+    
+    [contenteditable]:empty:before {
+      content: attr(placeholder);
+      color: #999;
+      pointer-events: none;
+      display: block;
+    }
+    
     .bottom-bar {
       background: linear-gradient(to bottom, #f8f8f8 0%, #ffffff 100%);
       padding: 8px 10px;
@@ -325,6 +337,156 @@
     .wrap-control.disabled {
       opacity: 0.5;
       pointer-events: none;
+    }
+    
+    /* Quick Emojis */
+    .quick-emoji-container {
+      display: flex;
+      gap: 3px;
+      flex-wrap: wrap;
+      align-items: center;
+    }
+    
+    .quick-emoji-btn {
+      min-width: 28px;
+      height: 28px;
+      padding: 2px;
+      border: 1px solid #e0e0e0;
+      background: white;
+      border-radius: 4px;
+      cursor: pointer;
+      font-size: 16px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: all 0.2s;
+      user-select: none;
+    }
+    
+    .quick-emoji-btn:hover {
+      background: #f0f0f0;
+      border-color: #4a90e2;
+      transform: scale(1.1);
+    }
+    
+    .quick-emoji-btn:active {
+      transform: scale(0.95);
+      background: #e0e0e0;
+    }
+    
+    /* Color Palette Panel */
+.color-palette-panel {
+    position: fixed;
+    top: 2px;
+    right: 35px;
+    transform: translateX(400px);
+    width: 320px;
+    background: white;
+    border-radius: 8px;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
+    padding: 6px;
+    z-index: 3000;
+    opacity: 0;
+    transition: all 0.3s ease;
+}
+    
+    .color-palette-panel.active {
+      opacity: 1;
+      transform: translateX(0);
+    }
+    
+    .color-palette-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 6px;
+      padding-bottom: 8px;
+      border-bottom: 2px solid #e0e0e0;
+    }
+    
+    .color-palette-title {
+      font-size: 12px;
+      font-weight: 600;
+      color: #333;
+    }
+    
+    .color-palette-close {
+      background: #ff5252;
+      color: white;
+      border: none;
+      border-radius: 3px;
+      padding: 4px 8px;
+      cursor: pointer;
+      font-size: 10px;
+      font-weight: 600;
+      transition: all 0.2s;
+    }
+    
+    .color-palette-close:hover {
+      background: #ff3838;
+    }
+    
+    .color-palette-grid {
+      display: grid;
+      grid-template-columns: repeat(9, 1fr);
+      gap: 3px;
+      margin-bottom: 12px;
+    }
+    
+    .color-palette-item {
+      width: 100%;
+      height: 28px;
+      border: 2px solid #e0e0e0;
+      border-radius: 4px;
+      cursor: pointer;
+      transition: all 0.15s;
+    }
+    
+    .color-palette-item:hover {
+      transform: scale(1.15);
+      border-color: #333;
+      box-shadow: 0 2px 6px rgba(0,0,0,0.2);
+      z-index: 10;
+    }
+    
+    .color-palette-custom {
+      display: flex;
+      gap: 6px;
+      align-items: center;
+      padding: 5px;
+      background: #f5f5f5;
+      border-radius: 4px;
+    }
+    
+    .color-palette-custom label {
+      font-size: 10px;
+      font-weight: 600;
+      color: #555;
+    }
+    
+    .color-palette-custom input[type="color"] {
+      width: 40px;
+      height: 28px;
+      border: 2px solid #d0d0d0;
+      border-radius: 3px;
+      cursor: pointer;
+    }
+    
+    .color-palette-custom .btn {
+      flex: 1;
+      font-size: 10px;
+      padding: 4px 6px;
+    }
+    
+    .btn-color-palette {
+      background: #673AB7;
+      color: white;
+      border-color: #5E35B1;
+    }
+    
+    .btn-color-palette:hover {
+      background: #5E35B1;
+      border-color: #512DA8;
     }
     
     /* Toast Notification */
@@ -438,7 +600,7 @@
       min-height: 200px;
     }
     
-.preview-image {
+    .preview-image {
       max-width: 100%;
       max-height: 600px;
       border: 2px solid #555;
@@ -636,7 +798,7 @@
       </div>
     </div>
 
-    <!-- Third Row: Text Wrapping -->
+<!-- Third Row: Text Wrapping -->
     <div class="toolbar-row">
       <div class="toolbar-section" style="flex: 1;">
         <span class="section-label">Wrap</span>
@@ -652,12 +814,48 @@
             <span class="value" id="maxWidthValue">800px</span>
           </div>
         </div>
+        <div class="divider"></div>
+        <div class="checkbox-group">
+          <input type="checkbox" id="rtlMode" checked>
+          <label for="rtlMode">RTL</label>
+        </div>
+        <div class="divider"></div>
+        <div class="checkbox-group">
+          <input type="checkbox" id="autoPaste">
+          <label for="autoPaste">Auto Paste</label>
+        </div>
+      </div>
+    </div>
+
+    <!-- Fourth Row: Quick Access Emojis -->
+    <div class="toolbar-row">
+      <div class="toolbar-section" style="flex: 1;">
+        <span class="section-label">Quick</span>
+        <div class="quick-emoji-container" id="quickEmojiContainer">
+          <!-- Emojis will be inserted here by JavaScript -->
+        </div>
+      </div>
+    </div>
+
+    <!-- Fifth Row: Text Color Palette -->
+    <div class="toolbar-row">
+      <div class="toolbar-section" style="flex: 1; justify-content: space-between;">
+        <div style="display: flex; align-items: center; gap: 6px;">
+          <span class="section-label">Text Color</span>
+          <button class="btn btn-icon btn-color-palette" id="colorPaletteBtn" title="Open Color Palette">
+            <svg xmlns="http://www.w3.org/2000/svg" fill="currentColor" viewBox="0 0 16 16">
+              <path d="M8 5a1.5 1.5 0 1 0 0-3 1.5 1.5 0 0 0 0 3m4 3a1.5 1.5 0 1 0 0-3 1.5 1.5 0 0 0 0 3M5.5 7a1.5 1.5 0 1 1-3 0 1.5 1.5 0 0 1 3 0m.5 6a1.5 1.5 0 1 0 0-3 1.5 1.5 0 0 0 0 3"/>
+              <path d="M16 8c0 3.15-1.866 2.585-3.567 2.07C11.42 9.763 10.465 9.473 10 10c-.603.683-.475 1.819-.351 2.92C9.826 14.495 9.996 16 8 16a8 8 0 1 1 8-8m-8 7c.611 0 .654-.171.655-.176.078-.146.124-.464.07-1.119-.014-.168-.037-.37-.061-.591-.052-.464-.112-1.005-.118-1.462-.01-.707.083-1.61.704-2.314.369-.417.845-.578 1.272-.618.404-.038.812.026 1.16.104.343.077.702.186 1.025.284l.028.008c.346.105.658.199.953.266.653.148.904.083.991.024C14.717 9.38 15 9.161 15 8a7 7 0 1 0-7 7"/>
+            </svg>
+          </button>
+        </div>
+        
       </div>
     </div>
   </div>
   
   <div class="text-container">
-    <textarea id="textInput" placeholder="Type your RTL text here..."></textarea>
+    <div id="textInput" contenteditable="true" placeholder="Type your RTL text here..."></div>
   </div>
   
   <div class="bottom-bar">
@@ -724,6 +922,24 @@
       <div class="preview-image-container">
         <img id="previewImage" class="preview-image" alt="Preview">
       </div>
+    </div>
+  </div>
+  
+  <!-- Color Palette Panel -->
+  <div class="color-palette-panel" id="colorPalettePanel">
+    <div class="color-palette-header">
+      <span class="color-palette-title">Select Color for Text</span>
+      <button class="color-palette-close" id="closeColorPalette">Close (ESC)</button>
+    </div>
+    
+    <div class="color-palette-grid" id="colorPaletteGrid">
+      <!-- Color items will be inserted here by JavaScript -->
+    </div>
+    
+    <div class="color-palette-custom">
+      <label>Custom:</label>
+      <input type="color" id="customColorPicker" value="#000000" title="Pick Custom Color">
+      <button class="btn" id="resetColorBtn">Reset Color</button>
     </div>
   </div>
   
