@@ -2,6 +2,8 @@
 
 > متن‌های فارسی (راست‌چین) رو به عکس PNG تبدیل کن و مستقیم بنداز روی چارت تریدینگ‌ویو.
 > مناسب برای ژورنال نویسی و Annotation بدون استفاده از نرم افزار های جانبی.
+> جایگزین ابزار Text در Trading View
+> یادداشت نویسی حرفه ای روی چارت
 
 <br>
 
@@ -56,6 +58,10 @@
 **تفاوت خروجی افزونه با متن Native تریدینگ ویو**
 
 ![Vazirmatn Font Screenshot](https://raw.githubusercontent.com/uncogeek/RTL-Text-for-Tradingview/main/screenshots/Screenshot-extension-output.png)
+
+**معرفی بخش های مختلف افزونه**
+
+![Screenshot Intro](https://raw.githubusercontent.com/uncogeek/RTL-Text-for-Tradingview/main/screenshots/Screenshot-intro.png)
 
 ### 🔄 قابلیت Text Wrapping (شکستن خودکار خطوط)
 
