@@ -15,7 +15,8 @@ let settings = {
   maxWidth: 800,
   rtlMode: true,
   savedText: '',
-  autoPaste: false
+  autoPaste: false,
+  borderRadius: false  
 };
 // Track cursor position and selection
 let cursorPosition = 0;
@@ -169,6 +170,23 @@ function hexToRgb(hex) {
     b: parseInt(result[3], 16)
   } : { r: 0, g: 0, b: 0 };
 }
+
+
+// Helper function to draw rounded rectangle
+function roundRect(ctx, x, y, width, height, radius) {
+  ctx.beginPath();
+  ctx.moveTo(x + radius, y);
+  ctx.lineTo(x + width - radius, y);
+  ctx.quadraticCurveTo(x + width, y, x + width, y + radius);
+  ctx.lineTo(x + width, y + height - radius);
+  ctx.quadraticCurveTo(x + width, y + height, x + width - radius, y + height);
+  ctx.lineTo(x + radius, y + height);
+  ctx.quadraticCurveTo(x, y + height, x, y + height - radius);
+  ctx.lineTo(x, y + radius);
+  ctx.quadraticCurveTo(x, y, x + radius, y);
+  ctx.closePath();
+}
+
 
 // Get plain text from contenteditable
 function getPlainText(element) {
@@ -384,25 +402,40 @@ function generateImage(callback) {
     ctx.textAlign = settings.rtlMode ? 'right' : 'left';
     ctx.textBaseline = 'top';
     
-    // Fill background
-    if (settings.fillBg) {
-      const rgb = hexToRgb(settings.bgColor);
-      const opacity = settings.bgOpacity / 100;
-      ctx.fillStyle = `rgba(${rgb.r}, ${rgb.g}, ${rgb.b}, ${opacity})`;
-      ctx.fillRect(0, 0, canvas.width, canvas.height);
-    }
+	// Fill background
+	if (settings.fillBg) {
+	  const rgb = hexToRgb(settings.bgColor);
+	  const opacity = settings.bgOpacity / 100;
+	  ctx.fillStyle = `rgba(${rgb.r}, ${rgb.g}, ${rgb.b}, ${opacity})`;
+	  
+	  if (settings.borderRadius) {
+		// Draw rounded rectangle for background
+		roundRect(ctx, 0, 0, canvas.width, canvas.height, 10);
+		ctx.fill();
+	  } else {
+		ctx.fillRect(0, 0, canvas.width, canvas.height);
+	  }
+	}
     
-    // Draw border
-    if (settings.showBorder && borderWidth > 0) {
-      ctx.strokeStyle = settings.borderColor;
-      ctx.lineWidth = borderWidth;
-      ctx.strokeRect(
-        borderWidth / 2, 
-        borderWidth / 2, 
-        canvas.width - borderWidth, 
-        canvas.height - borderWidth
-      );
-    }
+	// Draw border
+	if (settings.showBorder && borderWidth > 0) {
+	  ctx.strokeStyle = settings.borderColor;
+	  ctx.lineWidth = borderWidth;
+	  
+	  if (settings.borderRadius) {
+		// Draw rounded rectangle for border
+		roundRect(ctx, borderWidth / 2, borderWidth / 2, 
+				  canvas.width - borderWidth, canvas.height - borderWidth, 10);
+		ctx.stroke();
+	  } else {
+		ctx.strokeRect(
+		  borderWidth / 2, 
+		  borderWidth / 2, 
+		  canvas.width - borderWidth, 
+		  canvas.height - borderWidth
+		);
+	  }
+	}
     
     // Draw text with colors
     const startY = settings.padding + borderWidth;
@@ -530,6 +563,11 @@ function applyColorToSelection(color) {
 // Custom color picker
 document.getElementById('customColorPicker').addEventListener('mousedown', (e) => {
   e.preventDefault();
+});
+
+document.getElementById('borderRadius').addEventListener('change', (e) => {
+  settings.borderRadius = e.target.checked;
+  saveSettings();
 });
 
 document.getElementById('customColorPicker').addEventListener('change', (e) => {
