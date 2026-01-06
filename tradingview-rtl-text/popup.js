@@ -43,7 +43,7 @@ const EMOJIS = [
   '☑️', '✔️', '🔔', '👈', '👉', '👆', '👇', '☝️', '⛔️',
   '🟢', '🔴', '⚪️', '⚫️', '🟤', '🔳', '🔲', '▪️', '▫️', '🟠', '🧲',
   '⚖️', '⏰', '📌', '📍', '❗️', '❕', '❓', '❔', '‼️', '⁉️',
-  '↕️', '↔️', '📈', '📉', '⏰', '⛔️', '📝', '📅'
+  '↕️', '↔️', '📈', '📉', '🔍', '👁', '📝', '📅'
 ];
 
 const UNICODE_CHARS = [
@@ -108,6 +108,7 @@ function applySettingsToUI() {
   document.getElementById('maxWidthValue').textContent = settings.maxWidth + 'px';
   document.getElementById('rtlMode').checked = settings.rtlMode;
   document.getElementById('autoPaste').checked = settings.autoPaste;
+  document.getElementById('borderRadius').checked = settings.borderRadius;
   
   // Restore saved text with colors
   const editor = document.getElementById('textInput');
