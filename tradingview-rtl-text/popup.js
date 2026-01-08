@@ -1,23 +1,28 @@
-// Settings object
-let settings = {
-  fontWeight: 400,
+// Settings object with VERSION
+const DEFAULT_SETTINGS = {
+  version: 2, // Increment this when you change defaults
+  fontWeight: 500,
   fontSize: 20,
-  lineHeight: 1.5,
+  lineHeight: 1.2,
   textColor: '#000000',
   bgColor: '#ffffff',
-  bgOpacity: 100,
+  bgOpacity: 52,
   fillBg: true,
   showBorder: false,
   borderColor: '#000000',
   borderWidth: 2,
-  padding: 20,
+  padding: 10,
   wrapText: false,
   maxWidth: 800,
   rtlMode: true,
-  savedText: '',
+  savedText: 'اینجا متن بنویسید',
   autoPaste: false,
-  borderRadius: false  
+  borderRadius: true  
 };
+
+let settings = { ...DEFAULT_SETTINGS };
+
+
 // Track cursor position and selection
 let cursorPosition = 0;
 let savedSelection = null;
@@ -74,13 +79,42 @@ function restoreSelection() {
   return false;
 }
 
-// Load settings
+// Load settings with migration support
 function loadSettings() {
   const saved = localStorage.getItem('rtl_text_settings');
+  
   if (saved) {
-    settings = { ...settings, ...JSON.parse(saved) };
-    applySettingsToUI();
+    try {
+      const savedSettings = JSON.parse(saved);
+      
+      // Check if settings need migration
+      if (!savedSettings.version || savedSettings.version < DEFAULT_SETTINGS.version) {
+        console.log('Migrating settings from version', savedSettings.version || 0, 'to', DEFAULT_SETTINGS.version);
+        
+        // Merge: new defaults + old user customizations
+        settings = {
+          ...DEFAULT_SETTINGS,  // Start with new defaults
+          ...savedSettings,      // Override with saved values
+          version: DEFAULT_SETTINGS.version  // Update version
+        };
+        
+        // Save migrated settings
+        saveSettings();
+      } else {
+        // Settings are up to date
+        settings = { ...DEFAULT_SETTINGS, ...savedSettings };
+      }
+    } catch (e) {
+      console.error('Error loading settings:', e);
+      settings = { ...DEFAULT_SETTINGS };
+    }
+  } else {
+    // No saved settings, use defaults
+    settings = { ...DEFAULT_SETTINGS };
+    saveSettings(); // Save defaults for first run
   }
+  
+  applySettingsToUI();
 }
 
 // Save settings
